@@ -10,8 +10,8 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import apartmentIcon from '../public/icons/rent.png';
-//import styles from 'apartment_grid.css';
+import NFTIcon from '../public/icons/rent.png';
+//import styles from 'NFT_grid.css';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -49,6 +49,7 @@ const getNFTMemo = async (nftTokenId: string, client) => {
 };
 
 // {"command":"nft_history","api_version":2,"nft_id":"000861A8D783EBF762A2BC5020388F906975809BCFBCFB4014018E040003CB69","limit":1,"ledger_index_max":-1,"ledger_index_min":-1,"forward":true,"id":{"_WsClient":5}}
+let NFTs = []
 
 const getNFT = async () => {
   let results = '';
@@ -68,11 +69,12 @@ const getNFT = async () => {
     results += '\nNFTs:\n ' + JSON.stringify(nfts, null, 2);
     console.log(results);
 
-    let db = []
-    type NFTData = { ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
+    type NFTData = {id: number; ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
+	let x = 0;
     for (const nft of nfts.result.account_nfts) {
       // create dictionary for each NFT
-      let nftData: NFTData = { ID: '', url: '', floor: 0, appartmentId: 0, txIds: []};
+      let nftData: NFTData = { id: x, ID: '', url: '', floor: 0, appartmentId: 0, txIds: []};
+	  x++;
       // get ID
       nftData.ID = nft.NFTokenID;
       console.log('data : ', nft);
@@ -93,10 +95,10 @@ const getNFT = async () => {
           nftData.txIds = memo.txIds;
         }
       }
-      db.push(nftData);
+      NFTs.push(nftData);
     }
-    console.log('db : ', db);
-    return db;
+    console.log('NFTs : ', NFTs);
+    return NFTs;
   } catch (err) {
     console.error('Error fetching NFTs:', err);
     return null;
@@ -105,157 +107,9 @@ const getNFT = async () => {
   }
 };
 
-
-// output:
-// Connected. Getting NFTs...
-// NFTs:
-//  {
-//   "id": 2,
-//   "result": {
-//     "account": "rLeYKKxAcYrvBPvw69AMdHyGEAiZrCGrZu",
-//     "account_nfts": [
-//       {
-//         "Flags": 8,
-//         "Issuer": "rLeYKKxAcYrvBPvw69AMdHyGEAiZrCGrZu",
-//         "NFTokenID": "000861A8D783EBF762A2BC5020388F906975809BCFBCFB4014018E040003CB69",
-//         "NFTokenTaxon": 0,
-//         "TransferFee": 25000,
-//         "URI": "7B2275726C223A2268747470733A2F2F64726976652E676F6F676C652E636F6D2F66696C652F642F31645469624A6155695761354969617446446830595F75376A4A4C63334E3065482F766965773F7573703D64726976655F6C696E6B222C226E616D65223A226174746573746174696F6E2D64652D70726F70726965CC817465CC812D44323039382E706E67227D",
-//         "nft_serial": 248681
-//       },
-//       {
-//         "Flags": 8,
-//         "Issuer": "rLeYKKxAcYrvBPvw69AMdHyGEAiZrCGrZu",
-//         "NFTokenID": "000861A8D783EBF762A2BC5020388F906975809BCFBCFB40B86A4A000003CB65",
-//         "NFTokenTaxon": 0,
-//         "TransferFee": 25000,
-//         "URI": "68747470733A2F2F64726976652E676F6F676C652E636F6D2F66696C652F642F31645469624A6155695761354969617446446830595F75376A4A4C63334E3065482F766965773F7573703D64726976655F6C696E6B",
-//         "nft_serial": 248677
-//       },
-//       {
-//         "Flags": 8,
-//         "Issuer": "rLeYKKxAcYrvBPvw69AMdHyGEAiZrCGrZu",
-//         "NFTokenID": "000861A8D783EBF762A2BC5020388F906975809BCFBCFB40CF501B010003CB66",
-//         "NFTokenTaxon": 0,
-//         "TransferFee": 25000,
-//         "URI": "68747470733A2F2F64726976652E676F6F676C652E636F6D2F66696C652F642F31645469624A6155695761354969617446446830595F75376A4A4C63334E3065482F766965773F7573703D64726976655F6C696E6B",
-//         "nft_serial": 248678
-//       },
-//       {
-//         "Flags": 8,
-//         "Issuer": "rLeYKKxAcYrvBPvw69AMdHyGEAiZrCGrZu",
-//         "NFTokenID": "000861A8D783EBF762A2BC5020388F906975809BCFBCFB40E635EC020003CB67",
-//         "NFTokenTaxon": 0,
-//         "TransferFee": 25000,
-//         "URI": "68747470733A2F2F64726976652E676F6F676C652E636F6D2F66696C652F642F31645469624A6155695761354969617446446830595F75376A4A4C63334E3065482F766965773F7573703D64726976655F6C696E6B",
-//         "nft_serial": 248679
-//       },
-//       {
-//         "Flags": 8,
-//         "Issuer": "rLeYKKxAcYrvBPvw69AMdHyGEAiZrCGrZu",
-//         "NFTokenID": "000861A8D783EBF762A2BC5020388F906975809BCFBCFB40FD1BBD030003CB68",
-//         "NFTokenTaxon": 0,
-//         "TransferFee": 25000,
-//         "URI": "68747470733A2F2F64726976652E676F6F676C652E636F6D2F66696C652F642F31645469624A6155695761354969617446446830595F75376A4A4C63334E3065482F766965773F7573703D64726976655F6C696E6B",
-//         "nft_serial": 248680
-//       }
-//     ],
-//     "ledger_current_index": 390935,
-//     "validated": false
-//   },
-//   "type": "response"
-// }
-// url :  https://drive.google.com/file/d/1dTibJaUiWa5IiatFDh0Y_u7jJLc3N0eH/view?usp=drive_link
-// name :  attestation-de-propriété-D2098.png
-
 export default function Home() {
-  React.useEffect(() => {
-    getNFT()
-  }, [])
-	// Array of apartment objects with country, price, and type
-	const apartments = [
-		{
-		  id: 1,
-		  country: 'USA',
-		  price: '$1,200',
-		  type: 'Studio',
-		  description: 'Cozy studio apartment in downtown.',
-		  address: '123 Main St, Anytown, USA',
-		  features: ['Wi-Fi', 'Air Conditioning', 'Washer/Dryer'],
-		},
-		{
-		  id: 2,
-		  country: 'UK',
-		  price: '£850',
-		  type: 'One-Bedroom',
-		  description: 'Modern one-bedroom apartment near the river.',
-		  address: '456 Thames Rd, London, UK',
-		  features: ['Wi-Fi', 'Heating', 'Balcony'],
-		},
-		{
-		  id: 3,
-		  country: 'Canada',
-		  price: 'CAD 1,000',
-		  type: 'Two-Bedroom',
-		  description: 'Spacious two-bedroom apartment in the city center.',
-		  address: '789 Queen St, Toronto, Canada',
-		  features: ['Parking', 'Elevator', 'Gym'],
-		},
-		{
-		  id: 4,
-		  country: 'Australia',
-		  price: 'AUD 1,500',
-		  type: 'Penthouse',
-		  description: 'Luxury penthouse with ocean views.',
-		  address: '123 Ocean Ave, Sydney, Australia',
-		  features: ['Swimming Pool', 'Balcony', 'Security'],
-		},
-		{
-			id: 4,
-			country: 'Thailand',
-			price: 'D 1,500',
-			type: 'Penthouse',
-			description: 'Luxury penthouse with ocean views.',
-			address: '123 Ocean Ave, Sydney, Australia',
-			features: ['Swimming Pool', 'Balcony', 'Security'],
-		},
-		{
-			id: 5,
-			country: 'El Salvador',
-			price: 'USD 1,500',
-			type: 'Penthouse',
-			description: 'Luxury penthouse with ocean views.',
-			address: '123 Ocean Ave, Sydney, Australia',
-			features: ['Swimming Pool', 'Balcony', 'Security'],
-		},
-		{
-			id: 6,
-			country: 'Japan',
-			price: 'YEN 1,500',
-			type: 'Penthouse',
-			description: 'Luxury penthouse with ocean views.',
-			address: '123 Ocean Ave, Sydney, Australia',
-			features: ['Swimming Pool', 'Balcony', 'Security'],
-		},
-		{
-			id: 7,
-			country: 'France',
-			price: 'EUR 1,500',
-			type: 'Penthouse',
-			description: 'Luxury penthouse with ocean views.',
-			address: '123 Ocean Ave, Sydney, Australia',
-			features: ['Swimming Pool', 'Balcony', 'Security'],
-		},
-		{
-			id: 8,
-			country: 'Thailand',
-			price: 'AUD 1,500',
-			type: 'Penthouse',
-			description: 'Luxury penthouse with ocean views.',
-			address: '123 Ocean Ave, Sydney, Australia',
-			features: ['Swimming Pool', 'Balcony', 'Security'],
-		},
-	  ];
+	// Fetch NFTs
+	getNFT();
 
 	// Inline styles for the grid
 	const styles = {
@@ -323,64 +177,64 @@ export default function Home() {
 	  
 
 	// Modal component that shows the pop-up in the center of the screen
-	const Modal = ({ apartment, onClose }) => (
+	const Modal = ({ NFT, onClose }) => (
 		<>
 		  <div
 			style={styles.overlay}
 			onClick={onClose} // Close modal when overlay is clicked
 		  ></div>
 		  <div style={styles.modal}>
-			<h2>{apartment.type} in {apartment.country}</h2>
-			<p><strong>Price:</strong> {apartment.price}</p>
-			<p><strong>Description:</strong> {apartment.description}</p>
-			<p><strong>Address:</strong> {apartment.address}</p>
-			<p><strong>Features:</strong> {apartment.features.join(', ')}</p>
+			<h2>{NFT.type} in {NFT.country}</h2>
+			<p><strong>Price:</strong> {NFT.price}</p>
+			<p><strong>Description:</strong> {NFT.description}</p>
+			<p><strong>Address:</strong> {NFT.address}</p>
+			<p><strong>Features:</strong> {NFT.features.join(', ')}</p>
 			<button onClick={onClose}>Close</button> {/* Close button */}
 		  </div>
 		</>
 	  );
 
-	const [selectedApartment, setSelectedApartment] = useState(null);
+	const [selectedNFT, setSelectedNFT] = useState(null);
 
-	const handleGridItemClick = (apartment) => {
-	  setSelectedApartment(apartment);
+	const handleGridItemClick = (NFT) => {
+	  setSelectedNFT(NFT);
 	};
   
 	const handleCloseModal = () => {
-	  setSelectedApartment(null); // Close the modal by setting selectedApartment to null
+	  setSelectedNFT(null); // Close the modal by setting selectedNFT to null
 	};
 
 	return (
 		<div style={styles.gridContainer}>
 		<h1 style={styles.header}>Apartments listing</h1>
 		<div style={styles.grid}>
-		  {apartments.map((apartment) => (
+		  {NFTs.map((NFT) => (
 			<div
-			  key={apartment.id}
+			  key={NFT.id}
 			  style={{
 				...styles.gridItem,
-				...(selectedApartment === apartment ? styles.gridItemHover : {}), // Hover effect
+				...(selectedNFT === NFT ? styles.gridItemHover : {}), // Hover effect
 			  }}
-			  onClick={() => handleGridItemClick(apartment)} // Click to open modal
+			  onClick={() => handleGridItemClick(NFT)} // Click to open modal
 			>
 			  <div style = {styles.gridList}>
 				<Image
-				src={apartmentIcon} // Use the imported PNG
-				alt="Apartment"
+				src={NFTIcon} // Use the imported PNG
+				alt="NFT"
 				style={styles.gridItemImage} // Apply styling for the image
 				/>
 				<div>
-					<strong>Country:</strong> {apartment.country} <br />
-					<strong>Price:</strong> {apartment.price} <br />
-					<strong>Type:</strong> {apartment.type}
+					<strong>ID:</strong> {NFT.ID} <br />
+					<strong>URL:</strong> {NFT.url} <br />
+					<strong>Floor:</strong> {NFT.floor}
 				</div>
 				</div>
 			</div>
 		  ))}
 		</div>
-		{selectedApartment && (
+		{selectedNFT && (
 		  <Modal
-			apartment={selectedApartment}
+			NFT={selectedNFT}
 			onClose={handleCloseModal} // Modal with close function
 		  />
 		)}
