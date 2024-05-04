@@ -8,6 +8,7 @@ import CollectionSearch from './components/CollectionSearch';
 //UI
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import NFTIcon from '../public/icons/rent.png';
@@ -218,33 +219,42 @@ export default function Home() {
 
 	return (
 		<div style={styles.gridContainer}>
-      <h1 style={styles.header}>Apartment Listing</h1>
-      <div style={styles.grid}>
-        {NFTs.map((NFT) => (
-          <div
-            key={NFT.id}
-            style={{
-              ...styles.gridItem,
-              ...(selectedNFT === NFT ? styles.gridItemHover : {}),
-            }}
-            onClick={() => handleGridItemClick(NFT)}
-          >
-            <div style={styles.gridList}>
-              <Image src={NFTIcon} alt="NFT" style={styles.gridItemImage} />
-              <div>
-                <strong>ID:</strong> {NFT.ID} <br />
-                <strong>URL:</strong> {NFT.url} <br />
-                <strong>Floor:</strong> {NFT.floor}
+      {/* when loading show Loading else the rest */}
+      {loading ? ( 
+        <Box sx={{ display: 'flex' }}>
+          <CircularProgress />
+        </Box>
+        ) : (
+        <>
+        <h1 style={styles.header}>Apartment Listing</h1>
+        <div style={styles.grid}>
+          {NFTs.map((NFT) => (
+            <div
+              key={NFT.id}
+              style={{
+                ...styles.gridItem,
+                ...(selectedNFT === NFT ? styles.gridItemHover : {}),
+              }}
+              onClick={() => handleGridItemClick(NFT)}
+            >
+              <div style={styles.gridList}>
+                <Image src={NFTIcon} alt="NFT" style={styles.gridItemImage} />
+                <div>
+                  <strong>ID:</strong> {NFT.ID} <br />
+                  <strong>URL:</strong> {NFT.url} <br />
+                  <strong>Floor:</strong> {NFT.floor}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-      {selectedNFT && (
-        <Modal
-          NFT={selectedNFT}
-          onClose={handleCloseModal} // Modal with close function
-        />
+          ))}
+        </div>
+        {selectedNFT && (
+          <Modal
+            NFT={selectedNFT}
+            onClose={handleCloseModal} // Modal with close function
+          />
+        )}
+        </>
       )}
     </div>
 	);
