@@ -1,4 +1,8 @@
 import Image from "next/image";
+import { useEffect, useState } from 'react';
+import { ethers } from "ethers";
+import NFTCard from './components/NFTCard';
+import CollectionSearch from './components/CollectionSearch';
 
 export default function Home() {
   return (
