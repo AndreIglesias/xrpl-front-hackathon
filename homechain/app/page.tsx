@@ -49,7 +49,6 @@ const getNFTMemo = async (nftTokenId: string, client) => {
 };
 
 // {"command":"nft_history","api_version":2,"nft_id":"000861A8D783EBF762A2BC5020388F906975809BCFBCFB4014018E040003CB69","limit":1,"ledger_index_max":-1,"ledger_index_min":-1,"forward":true,"id":{"_WsClient":5}}
-let NFTs = []
 
 const getNFT = async () => {
   let results = '';
@@ -70,7 +69,9 @@ const getNFT = async () => {
     console.log(results);
 
     type NFTData = {id: number; ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
-	let x = 0;
+	  let x = 0;
+    let NFTs = []
+
     for (const nft of nfts.result.account_nfts) {
       // create dictionary for each NFT
       let nftData: NFTData = { id: x, ID: '', url: '', floor: 0, appartmentId: 0, txIds: []};
@@ -108,8 +109,20 @@ const getNFT = async () => {
 };
 
 export default function Home() {
-	// Fetch NFTs
-	getNFT();
+  const [NFTs, setNFTs] = useState([]);
+  const [loading, setLoading] = useState(true); // To handle the loading state
+  const [selectedNFT, setSelectedNFT] = useState(null);
+
+  useEffect(() => {
+    const fetchNFTs = async () => {
+      const fetchedNFTs = await getNFT();
+      setNFTs(fetchedNFTs);
+      setLoading(false); // Set loading to false when data is loaded
+    };
+
+    fetchNFTs();
+  }, []);
+
 
 	// Inline styles for the grid
 	const styles = {
@@ -184,17 +197,16 @@ export default function Home() {
 			onClick={onClose} // Close modal when overlay is clicked
 		  ></div>
 		  <div style={styles.modal}>
-			<h2>{NFT.type} in {NFT.country}</h2>
-			<p><strong>Price:</strong> {NFT.price}</p>
-			<p><strong>Description:</strong> {NFT.description}</p>
-			<p><strong>Address:</strong> {NFT.address}</p>
-			<p><strong>Features:</strong> {NFT.features.join(', ')}</p>
+      <h2>{NFT.ID}</h2>
+			<p><strong>id:</strong> {NFT.id}</p>
+			<p><strong>url:</strong> {NFT.url}</p>
+			<p><strong>floor:</strong> {NFT.floor}</p>
+			<p><strong>appartmentId:</strong> {NFT.appartmentId}</p>
+      <p><strong>txIds:</strong> {NFT.txIds}</p>
 			<button onClick={onClose}>Close</button> {/* Close button */}
 		  </div>
 		</>
 	  );
-
-	const [selectedNFT, setSelectedNFT] = useState(null);
 
 	const handleGridItemClick = (NFT) => {
 	  setSelectedNFT(NFT);
@@ -206,38 +218,34 @@ export default function Home() {
 
 	return (
 		<div style={styles.gridContainer}>
-		<h1 style={styles.header}>Apartments listing</h1>
-		<div style={styles.grid}>
-		  {NFTs.map((NFT) => (
-			<div
-			  key={NFT.id}
-			  style={{
-				...styles.gridItem,
-				...(selectedNFT === NFT ? styles.gridItemHover : {}), // Hover effect
-			  }}
-			  onClick={() => handleGridItemClick(NFT)} // Click to open modal
-			>
-			  <div style = {styles.gridList}>
-				<Image
-				src={NFTIcon} // Use the imported PNG
-				alt="NFT"
-				style={styles.gridItemImage} // Apply styling for the image
-				/>
-				<div>
-					<strong>ID:</strong> {NFT.ID} <br />
-					<strong>URL:</strong> {NFT.url} <br />
-					<strong>Floor:</strong> {NFT.floor}
-				</div>
-				</div>
-			</div>
-		  ))}
-		</div>
-		{selectedNFT && (
-		  <Modal
-			NFT={selectedNFT}
-			onClose={handleCloseModal} // Modal with close function
-		  />
-		)}
-	  </div>
+      <h1 style={styles.header}>Apartment Listing</h1>
+      <div style={styles.grid}>
+        {NFTs.map((NFT) => (
+          <div
+            key={NFT.id}
+            style={{
+              ...styles.gridItem,
+              ...(selectedNFT === NFT ? styles.gridItemHover : {}),
+            }}
+            onClick={() => handleGridItemClick(NFT)}
+          >
+            <div style={styles.gridList}>
+              <Image src={NFTIcon} alt="NFT" style={styles.gridItemImage} />
+              <div>
+                <strong>ID:</strong> {NFT.ID} <br />
+                <strong>URL:</strong> {NFT.url} <br />
+                <strong>Floor:</strong> {NFT.floor}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {selectedNFT && (
+        <Modal
+          NFT={selectedNFT}
+          onClose={handleCloseModal} // Modal with close function
+        />
+      )}
+    </div>
 	);
 }
