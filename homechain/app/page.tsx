@@ -5,6 +5,22 @@ import {  Client,  Wallet, Request, convertHexToString }  from "xrpl";
 import { ethers } from "ethers";
 import NFTCard from './components/NFTCard';
 import CollectionSearch from './components/CollectionSearch';
+//UI
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import apartmentIcon from '../public/icons/rent.png';
+//import styles from 'apartment_grid.css';
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+//end UI
 
 const client = new Client("wss://s.altnet.rippletest.net:51233")
 const issuerSeed = 'sEdTLkGGQLbow2ydptZRjYvqS3c5Pxe'
@@ -111,113 +127,218 @@ export default function Home() {
   React.useEffect(() => {
     getNFT()
   }, [])
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+	// Array of apartment objects with country, price, and type
+	const apartments = [
+		{
+		  id: 1,
+		  country: 'USA',
+		  price: '$1,200',
+		  type: 'Studio',
+		  description: 'Cozy studio apartment in downtown.',
+		  address: '123 Main St, Anytown, USA',
+		  features: ['Wi-Fi', 'Air Conditioning', 'Washer/Dryer'],
+		},
+		{
+		  id: 2,
+		  country: 'UK',
+		  price: '£850',
+		  type: 'One-Bedroom',
+		  description: 'Modern one-bedroom apartment near the river.',
+		  address: '456 Thames Rd, London, UK',
+		  features: ['Wi-Fi', 'Heating', 'Balcony'],
+		},
+		{
+		  id: 3,
+		  country: 'Canada',
+		  price: 'CAD 1,000',
+		  type: 'Two-Bedroom',
+		  description: 'Spacious two-bedroom apartment in the city center.',
+		  address: '789 Queen St, Toronto, Canada',
+		  features: ['Parking', 'Elevator', 'Gym'],
+		},
+		{
+		  id: 4,
+		  country: 'Australia',
+		  price: 'AUD 1,500',
+		  type: 'Penthouse',
+		  description: 'Luxury penthouse with ocean views.',
+		  address: '123 Ocean Ave, Sydney, Australia',
+		  features: ['Swimming Pool', 'Balcony', 'Security'],
+		},
+		{
+			id: 4,
+			country: 'Thailand',
+			price: 'D 1,500',
+			type: 'Penthouse',
+			description: 'Luxury penthouse with ocean views.',
+			address: '123 Ocean Ave, Sydney, Australia',
+			features: ['Swimming Pool', 'Balcony', 'Security'],
+		},
+		{
+			id: 5,
+			country: 'El Salvador',
+			price: 'USD 1,500',
+			type: 'Penthouse',
+			description: 'Luxury penthouse with ocean views.',
+			address: '123 Ocean Ave, Sydney, Australia',
+			features: ['Swimming Pool', 'Balcony', 'Security'],
+		},
+		{
+			id: 6,
+			country: 'Japan',
+			price: 'YEN 1,500',
+			type: 'Penthouse',
+			description: 'Luxury penthouse with ocean views.',
+			address: '123 Ocean Ave, Sydney, Australia',
+			features: ['Swimming Pool', 'Balcony', 'Security'],
+		},
+		{
+			id: 7,
+			country: 'France',
+			price: 'EUR 1,500',
+			type: 'Penthouse',
+			description: 'Luxury penthouse with ocean views.',
+			address: '123 Ocean Ave, Sydney, Australia',
+			features: ['Swimming Pool', 'Balcony', 'Security'],
+		},
+		{
+			id: 8,
+			country: 'Thailand',
+			price: 'AUD 1,500',
+			type: 'Penthouse',
+			description: 'Luxury penthouse with ocean views.',
+			address: '123 Ocean Ave, Sydney, Australia',
+			features: ['Swimming Pool', 'Balcony', 'Security'],
+		},
+	  ];
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	// Inline styles for the grid
+	const styles = {
+		gridContainer: {
+		  color: '#333',
+		  padding: '30px', // Increased padding
+		  backgroundColor: '#f8f8f8', // Light gray background color
+		},
+		grid: {
+		  display: 'grid', // Set to grid layout
+		  gap: '25px', // Space between grid items
+		  gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', // Defines columns
+		},
+		gridItem: {
+		  border: '1px solid #ddd', // Light border
+		  padding: '15px', // Increased padding
+		  backgroundColor: '#ffffff', // White background
+		  borderRadius: '10px', // Rounded corners
+		  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow
+		  cursor: 'pointer', // Indicates it's clickable
+		  transition: 'transform 0.2s, boxShadow 0.2s', // Smooth transitions
+		},
+		gridItemHover: {
+		  transform: 'translateY(-5px)', // Lift on hover
+		  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow on hover
+		},
+		fontBlack: {
+		  color: '#333', // Dark gray font color (close to black)
+		},
+		modal: {
+		  position: 'fixed',
+		  top: '50%',
+		  left: '50%',
+		  transform: 'translate(-50%, -50%)', // Centered on screen
+		  backgroundColor: 'white',
+		  border: '1px solid #ccc',
+		  padding: '20px',
+		  borderRadius: '10px',
+		  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Shadow for depth
+		  zIndex: 1000, // Ensures modal stays on top
+		},
+		overlay: {
+		  position: 'fixed',
+		  top: 0,
+		  left: 0,
+		  width: '100%',
+		  height: '100%',
+		  backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark overlay
+		  zIndex: 999, // Places overlay beneath modal
+		},
+		header: {
+			fontSize: '35px',
+			marginBottom: '20px',
+		},
+		gridItemImage: {
+			width: '50px',
+			height: '50px',
+			marginRight: '15px',
+		},
+		gridList: {
+			display: 'flex', // Flex layout
+			alignItems: 'center',
+		}
+	  };
+	  
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+	// Modal component that shows the pop-up in the center of the screen
+	const Modal = ({ apartment, onClose }) => (
+		<>
+		  <div
+			style={styles.overlay}
+			onClick={onClose} // Close modal when overlay is clicked
+		  ></div>
+		  <div style={styles.modal}>
+			<h2>{apartment.type} in {apartment.country}</h2>
+			<p><strong>Price:</strong> {apartment.price}</p>
+			<p><strong>Description:</strong> {apartment.description}</p>
+			<p><strong>Address:</strong> {apartment.address}</p>
+			<p><strong>Features:</strong> {apartment.features.join(', ')}</p>
+			<button onClick={onClose}>Close</button> {/* Close button */}
+		  </div>
+		</>
+	  );
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+	const [selectedApartment, setSelectedApartment] = useState(null);
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+	const handleGridItemClick = (apartment) => {
+	  setSelectedApartment(apartment);
+	};
+  
+	const handleCloseModal = () => {
+	  setSelectedApartment(null); // Close the modal by setting selectedApartment to null
+	};
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+	return (
+		<div style={styles.gridContainer}>
+		<h1 style={styles.header}>Apartments listing</h1>
+		<div style={styles.grid}>
+		  {apartments.map((apartment) => (
+			<div
+			  key={apartment.id}
+			  style={{
+				...styles.gridItem,
+				...(selectedApartment === apartment ? styles.gridItemHover : {}), // Hover effect
+			  }}
+			  onClick={() => handleGridItemClick(apartment)} // Click to open modal
+			>
+			  <div style = {styles.gridList}>
+				<Image
+				src={apartmentIcon} // Use the imported PNG
+				alt="Apartment"
+				style={styles.gridItemImage} // Apply styling for the image
+				/>
+				<div>
+					<strong>Country:</strong> {apartment.country} <br />
+					<strong>Price:</strong> {apartment.price} <br />
+					<strong>Type:</strong> {apartment.type}
+				</div>
+				</div>
+			</div>
+		  ))}
+		</div>
+		{selectedApartment && (
+		  <Modal
+			apartment={selectedApartment}
+			onClose={handleCloseModal} // Modal with close function
+		  />
+		)}
+	  </div>
+	);
 }
