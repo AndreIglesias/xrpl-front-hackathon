@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from 'react';
-import {  Client,  Wallet, Request, convertHexToString }  from "xrpl";
+import {  Client,  Wallet, Request, convertHexToString, TxRequest }  from "xrpl";
 import { ethers } from "ethers";
 import NFTCard from './components/NFTCard';
 import CollectionSearch from './components/CollectionSearch';
@@ -23,13 +23,39 @@ const Item = styled(Paper)(({ theme }) => ({
 //end UI
 
 const client = new Client("wss://s.altnet.rippletest.net:51233")
+const clio_client = new Client("wss://clio.altnet.rippletest.net:51233")
 const issuerSeed = 'sEdTLkGGQLbow2ydptZRjYvqS3c5Pxe'
+
+const getNFTMemo = async (nftTokenId: string, client) => {
+  try {
+    await client.connect();
+    console.log('Fetching memo data for NFT:', nftTokenId)
+    const request: Request = {
+      command: 'nft_history',
+      nft_id: nftTokenId,
+    };
+    console.log('Request:', request);
+    const response = await client.request(request);
+    console.log('Response:', response);
+    let memo = response.result.transactions[0].tx.Memos[0].Memo.MemoData;
+    memo = convertHexToString(memo);
+    console.log('Memo:', memo)
+    // convert memo to JSON
+    memo = JSON.parse(memo);
+    return memo;
+  } catch (err) {
+    return null;
+  }
+};
+
+// {"command":"nft_history","api_version":2,"nft_id":"000861A8D783EBF762A2BC5020388F906975809BCFBCFB4014018E040003CB69","limit":1,"ledger_index_max":-1,"ledger_index_min":-1,"forward":true,"id":{"_WsClient":5}}
 
 const getNFT = async () => {
   let results = '';
   const standby_wallet = Wallet.fromSeed(issuerSeed);
 
   await client.connect();
+  await clio_client.connect();
 
   results += '\nConnected. Getting NFTs...';
   const request: Request = {
@@ -42,19 +68,38 @@ const getNFT = async () => {
     results += '\nNFTs:\n ' + JSON.stringify(nfts, null, 2);
     console.log(results);
 
-    type NFTData = { name: string; url: string };
+    let db = []
+    type NFTData = { ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
     for (const nft of nfts.result.account_nfts) {
-      const data: NFTData = JSON.parse(convertHexToString(nft.URI!));
-      console.log('data : ', data);
-      console.log('url : ', data.url);
-      console.log('name : ', data.name);
+      // create dictionary for each NFT
+      let nftData: NFTData = { ID: '', url: '', floor: 0, appartmentId: 0, txIds: []};
+      // get ID
+      nftData.ID = nft.NFTokenID;
+      console.log('data : ', nft);
+      if (nft.URI !== undefined) {
+        try {
+          // console.log('before url :', convertHexToString(nft.URI!));
+          // console.log('url :', JSON.parse(convertHexToString(nft.URI!)).url);
+          nftData.url = convertHexToString(nft.URI!);
+        } catch (err) {}
+      }
+      if (nft.NFTokenID !== undefined) {
+        let memo = await getNFTMemo(nft.NFTokenID, clio_client);
+        console.log(memo);
+        // memo is "{"floor":2,"appartmentId":3,"txIds":["1F7FFC85C39390B0B4A71D03B53DFA7D90E5B8902106C09E0D6BA85AF852EFE1","4E7BFC6CBD824DCFCE7D51C643F9E51CC0898309387286631D89B1F3C616F3E8","655294C0191028D6F6F149FE5B0E73FE277481CC38EC107B4266028F9D79F27C"]}"
+        if (memo !== null) {
+          nftData.floor = memo.floor;
+          nftData.appartmentId = memo.appartmentId;
+          nftData.txIds = memo.txIds;
+        }
+      }
+      db.push(nftData);
     }
-    // const data: NFTData = JSON.parse(convertHexToString(nfts.result.account_nfts[0].URI!));
-    // console.log('data : ', data);
-    // console.log('url : ', data.url);
-    // console.log('name : ', data.name);
+    console.log('db : ', db);
+    return db;
   } catch (err) {
     console.error('Error fetching NFTs:', err);
+    return null;
   } finally {
     client.disconnect();
   }
