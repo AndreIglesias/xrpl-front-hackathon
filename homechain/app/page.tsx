@@ -7,12 +7,8 @@ import NFTCard from './components/NFTCard';
 import CollectionSearch from './components/CollectionSearch';
 //UI
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
+import { Button, Box, CircularProgress, Paper, Grid } from '@mui/material';
 import NFTIcon from '../public/icons/rent.png';
-//import styles from 'NFT_grid.css';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -205,13 +201,18 @@ export default function Home() {
 			onClick={onClose} // Close modal when overlay is clicked
 		  ></div>
 		  <div style={styles.modal}>
-      <h2>{NFT.ID}</h2>
+      <h2><strong>NFTokenID:</strong> {NFT.ID}</h2>
 			<p><strong>id:</strong> {NFT.id}</p>
       <p><strong>url:</strong> <a href={NFT.url} style={{color: "blue"}}>{NFT.url}</a></p>
 			<p><strong>floor:</strong> {NFT.floor}</p>
 			<p><strong>appartmentId:</strong> {NFT.appartmentId}</p>
-      <p><strong>txIds:</strong> {NFT.txIds}</p>
-			<button onClick={onClose}>Close</button> {/* Close button */}
+      <p><strong>txIds:</strong></p>
+        {NFT.txIds.join(", ")}
+      <br />
+      <br />
+      <Box sx={{ display: 'flex', width: '100%', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
+        <Button variant="contained" onClick={onClose}>Close</Button>
+      </Box>
 		  </div>
 		</>
 	  );
