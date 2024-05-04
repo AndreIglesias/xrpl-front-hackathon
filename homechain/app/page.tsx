@@ -49,8 +49,6 @@ const getNFTMemo = async (nftTokenId: string, client) => {
   }
 };
 
-// {"command":"nft_history","api_version":2,"nft_id":"000861A8D783EBF762A2BC5020388F906975809BCFBCFB4014018E040003CB69","limit":1,"ledger_index_max":-1,"ledger_index_min":-1,"forward":true,"id":{"_WsClient":5}}
-
 const getNFT = async () => {
   let results = '';
   const standby_wallet = Wallet.fromSeed(issuerSeed);
@@ -131,6 +129,7 @@ export default function Home() {
 		  color: '#333',
 		  padding: '30px', // Increased padding
 		  backgroundColor: '#f8f8f8', // Light gray background color
+      height: '100vh',
 		},
 		grid: {
 		  display: 'grid', // Set to grid layout
@@ -184,9 +183,17 @@ export default function Home() {
 			marginRight: '15px',
 		},
 		gridList: {
-			display: 'flex', // Flex layout
 			alignItems: 'center',
-		}
+		},
+    textEllipsis: {
+      whiteSpace: 'nowrap', // Ensures the text stays on one line
+      overflow: 'hidden', // Hides text that overflows the container
+      textOverflow: 'ellipsis', // Replaces hidden text with '...'
+    },
+    gridItemContent: {
+      padding: '5px', // Adds some padding around the text
+    },
+  
 	  };
 	  
 
@@ -200,7 +207,7 @@ export default function Home() {
 		  <div style={styles.modal}>
       <h2>{NFT.ID}</h2>
 			<p><strong>id:</strong> {NFT.id}</p>
-			<p><strong>url:</strong> {NFT.url}</p>
+      <p><strong>url:</strong> <a href={NFT.url} style={{color: "blue"}}>{NFT.url}</a></p>
 			<p><strong>floor:</strong> {NFT.floor}</p>
 			<p><strong>appartmentId:</strong> {NFT.appartmentId}</p>
       <p><strong>txIds:</strong> {NFT.txIds}</p>
@@ -239,11 +246,17 @@ export default function Home() {
             >
               <div style={styles.gridList}>
                 <Image src={NFTIcon} alt="NFT" style={styles.gridItemImage} />
-                <div>
-                  <strong>ID:</strong> {NFT.ID} <br />
-                  <strong>URL:</strong> {NFT.url} <br />
+                <div style={styles.gridItemContent}>
+                <div style={styles.textEllipsis}>
+                  <strong>ID:</strong> {NFT.ID}
+                </div>
+                <div style={styles.textEllipsis}>
+                  <strong>URL:</strong> {NFT.url}
+                </div>
+                <div style={styles.textEllipsis}>
                   <strong>Floor:</strong> {NFT.floor}
                 </div>
+              </div>
               </div>
             </div>
           ))}
