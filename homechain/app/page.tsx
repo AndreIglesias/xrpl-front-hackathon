@@ -24,7 +24,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const client = new Client("wss://s.altnet.rippletest.net:51233")
 const clio_client = new Client("wss://clio.altnet.rippletest.net:51233")
-const issuerSeed = 'sEdTLkGGQLbow2ydptZRjYvqS3c5Pxe'
+const issuerSeed = 'sEd7bBA8ZV6kwTFy4qvuqgRYrTqFdM9'
 
 const getNFTMemo = async (nftTokenId: string, client) => {
   try {
