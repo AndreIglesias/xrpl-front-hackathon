@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 //component containing our form, button and state handling logic
-const CollectionSearch = ({ searchText }) => {
+const CollectionSearch = ({ searchText }: { searchText: string }) => {
     const [text, setText] = useState('');
 
 //form event handling logic - sets our state variable text
