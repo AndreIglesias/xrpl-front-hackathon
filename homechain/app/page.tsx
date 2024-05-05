@@ -21,7 +21,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const client = new Client("wss://s.altnet.rippletest.net:51233")
 const clio_client = new Client("wss://clio.altnet.rippletest.net:51233")
-const issuerSeed = 'sEd7bBA8ZV6kwTFy4qvuqgRYrTqFdM9'
+const issuerSeed = 'sEd78jwso8dMzEwHjzfyfhtr8CFY4V8'
 
 const getNFTMemo = async (nftTokenId: string, client) => {
   try {
@@ -63,7 +63,7 @@ const getNFT = async () => {
     results += '\nNFTs:\n ' + JSON.stringify(nfts, null, 2);
     console.log(results);
 
-    type NFTData = {id: number; ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
+    type NFTData = {name: string; collectionName: number; id: number; ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
 	  let x = 0;
     let NFTs = []
 
@@ -89,6 +89,8 @@ const getNFT = async () => {
           nftData.floor = memo.floor;
           nftData.appartmentId = memo.appartmentId;
           nftData.txIds = memo.txIds;
+          nftData.collectionName = memo.collectionName;
+          nftData.name = memo.name;
         }
       }
       NFTs.push(nftData);
@@ -201,6 +203,7 @@ export default function Home() {
 			onClick={onClose} // Close modal when overlay is clicked
 		  ></div>
 		  <div style={styles.modal}>
+      <h1><strong>{NFT.ID}</strong></h1>
       <h2><strong>NFTokenID:</strong> {NFT.ID}</h2>
 			<p><strong>id:</strong> {NFT.id}</p>
       <p><strong>url:</strong> <a href={NFT.url} style={{color: "blue"}}>{NFT.url}</a></p>
@@ -246,6 +249,9 @@ export default function Home() {
               onClick={() => handleGridItemClick(NFT)}
             >
               <div style={styles.gridList}>
+                <div style={styles.textEllipsis}>
+                  <strong>{NFT.name}</strong>
+                </div>
                 <Image src={NFTIcon} alt="NFT" style={styles.gridItemImage} />
                 <div style={styles.gridItemContent}>
                 <div style={styles.textEllipsis}>
