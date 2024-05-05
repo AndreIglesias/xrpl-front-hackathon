@@ -6,9 +6,14 @@ import { ethers } from "ethers";
 import NFTCard from './components/NFTCard';
 import CollectionSearch from './components/CollectionSearch';
 //UI
+import TextField from "@mui/material/TextField";
 import { styled } from '@mui/material/styles';
-import { Button, Box, CircularProgress, Paper, Grid } from '@mui/material';
+import { Button, Box, CircularProgress, Paper, Grid, ButtonGroup } from '@mui/material';
 import NFTIcon from '../public/icons/rent.png';
+
+import i1 from "../public/01.png";
+import i2 from "../public/02.png";
+import i3 from "../public/03.png";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -63,7 +68,7 @@ const getNFT = async () => {
     results += '\nNFTs:\n ' + JSON.stringify(nfts, null, 2);
     console.log(results);
 
-    type NFTData = {name: string; collectionName: number; id: number; ID: string; url: string; floor: number; appartmentId: number; txIds: string[]};
+    type NFTData = {name: string; collectionName: string; id: number; ID: string; url: string; floor: number; appartmentId: number; txIds: string[], nftUrl: string, image: string};
 	  let x = 0;
     let NFTs = []
 
@@ -91,6 +96,14 @@ const getNFT = async () => {
           nftData.txIds = memo.txIds;
           nftData.collectionName = memo.collectionName;
           nftData.name = memo.name;
+          nftData.nftUrl = `https://testnet.xrpl.org/nft/${nftData.ID}`
+          nftData.image = i3;
+          if (nftData.collectionName === "75006") {
+            nftData.image = i1;
+          }
+          else if (nftData.collectionName === "75007"){
+            nftData.image = i2;
+          }
         }
       }
       NFTs.push(nftData);
@@ -121,6 +134,13 @@ export default function Home() {
   }, []);
 
 
+  const TransactionLinks = ({ NFT }) => {
+    if (!NFT || !NFT.txIds || NFT.txIds.length === 0) {
+      return <p>No transaction IDs available.</p>;
+    }
+  };
+  
+
 	// Inline styles for the grid
 	const styles = {
 		gridContainer: {
@@ -132,7 +152,7 @@ export default function Home() {
 		grid: {
 		  display: 'grid', // Set to grid layout
 		  gap: '25px', // Space between grid items
-		  gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', // Defines columns
+      gridTemplateColumns: 'repeat(auto-fill, minmax(370px, 1fr))'
 		},
 		gridItem: {
 		  border: '1px solid #ddd', // Light border
@@ -176,8 +196,9 @@ export default function Home() {
 			marginBottom: '20px',
 		},
 		gridItemImage: {
-			width: '50px',
-			height: '50px',
+			width: '100%',
+      marginTop: "10px",
+      marginBottom: "10px",
 			marginRight: '15px',
 		},
 		gridList: {
@@ -203,14 +224,37 @@ export default function Home() {
 			onClick={onClose} // Close modal when overlay is clicked
 		  ></div>
 		  <div style={styles.modal}>
-      <h1><strong>{NFT.ID}</strong></h1>
+      <a href={NFT.nftUrl}>
+      <h1>
+        <strong>{NFT.name}</strong>
+      </h1>
+      </a>
+
+      <h1><strong>Collection:</strong> {NFT.collectionName}</h1>
       <h2><strong>NFTokenID:</strong> {NFT.ID}</h2>
-			<p><strong>id:</strong> {NFT.id}</p>
       <p><strong>url:</strong> <a href={NFT.url} style={{color: "blue"}}>{NFT.url}</a></p>
 			<p><strong>floor:</strong> {NFT.floor}</p>
 			<p><strong>appartmentId:</strong> {NFT.appartmentId}</p>
-      <p><strong>txIds:</strong></p>
-        {NFT.txIds.join(", ")}
+      <div>
+      <p><strong>Transaction Links:</strong></p>
+      <ul>
+      <ButtonGroup orientation="vertical" aria-label="Vertical button group">
+        {NFT.txIds.map((txId, index) => (
+          <li key={index}>
+            <Button variant="outlined" style={{width: '100%'}}>
+            <a
+              href={`https://testnet.xrpl.org/transactions/${txId}`}
+              target="_blank" // Open in a new tab
+              rel="noopener noreferrer" // Security measure for new tab
+            >
+              {txId}
+            </a>
+            </Button>
+          </li>
+        ))}
+        </ButtonGroup>
+      </ul>
+    </div>
       <br />
       <br />
       <Box sx={{ display: 'flex', width: '100%', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
@@ -252,7 +296,10 @@ export default function Home() {
                 <div style={styles.textEllipsis}>
                   <strong>{NFT.name}</strong>
                 </div>
-                <Image src={NFTIcon} alt="NFT" style={styles.gridItemImage} />
+
+                <Image src={NFT.image} alt="NFT" style={styles.gridItemImage} />
+
+
                 <div style={styles.gridItemContent}>
                 <div style={styles.textEllipsis}>
                   <strong>ID:</strong> {NFT.ID}
